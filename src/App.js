@@ -1,494 +1,933 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 export default function App() {
-  const [language, setLanguage] = useState("en");
+  const [noteType, setNoteType] = useState("progress");
+  const [inputLanguage, setInputLanguage] = useState("auto");
+  const [roughNotes, setRoughNotes] = useState("");
+  const [output, setOutput] = useState("");
+  const [copied, setCopied] = useState(false);
+  const [substanceMode, setSubstanceMode] = useState(false);
 
-  const [noteFacts, setNoteFacts] = useState("");
-  const [noteOutput, setNoteOutput] = useState("");
+  const [sbarFields, setSbarFields] = useState({
+    situation: "",
+    background: "",
+    assessment: "",
+    recommendation: "",
+  });
+  const [activeSbarField, setActiveSbarField] = useState("situation");
 
-  const [situation, setSituation] = useState("");
-  const [background, setBackground] = useState("");
-  const [assessment, setAssessment] = useState("");
-  const [recommendation, setRecommendation] = useState("");
-  const [sbarOutput, setSbarOutput] = useState("");
+  const [isListening, setIsListening] = useState(false);
+  const [status, setStatus] = useState("Tap Start Dictation to speak.");
+  const recognitionRef = useRef(null);
 
-  const text = useMemo(() => {
-    const content = {
-      en: {
-        brand: "NurseChart Pro",
-        badge: "Built for nurses",
-        headline: "Chart Smarter. Finish Faster.",
-        subheadline:
-          "Create professional nursing notes and SBAR reports in seconds with a cleaner workflow.",
-        noteTitle: "AI Nurse Note Writer",
-        noteSubtitle:
-          "Enter quick patient facts, actions taken, and response. Generate a polished note draft.",
-        notePlaceholder:
-          "Example: Patient complained of 8/10 lower back pain. BP 148/92. PRN pain medication given as ordered. Repositioned for comfort. MD notified. Patient resting in bed with call light in reach.",
-        noteButton: "Generate Nurse Note",
-        noteClear: "Clear",
-        noteOutputTitle: "Generated Nursing Note",
-        sbarTitle: "SBAR Generator",
-        sbarSubtitle:
-          "Fill in the key details and create a structured handoff report.",
-        situation: "Situation",
-        situationPlaceholder:
-          "Example: Patient reports worsening shortness of breath during ambulation.",
-        background: "Background",
-        backgroundPlaceholder:
-          "Example: History of CHF, admitted 2 days ago, on 2L oxygen via nasal cannula.",
-        assessment: "Assessment",
-        assessmentPlaceholder:
-          "Example: Respirations labored, O2 sat 89% on 2L, crackles noted bilaterally.",
-        recommendation: "Recommendation",
-        recommendationPlaceholder:
-          "Example: Request evaluation, possible oxygen adjustment, and further orders.",
-        sbarButton: "Generate SBAR",
-        sbarOutputTitle: "Generated SBAR Report",
-        chooseLanguage: "Language",
-        english: "English",
-        creole: "Kreyòl Ayisyen",
-        featuresTitle: "Why NurseChart Pro",
-        feature1: "Faster documentation",
-        feature2: "Cleaner handoff communication",
-        feature3: "Built for real nursing workflow",
-        footer: "NurseChart Pro • Documentation support for busy nurses",
-        noteFallback:
-          "Enter a few patient details first, then generate your nursing note.",
-        sbarFallback:
-          "Complete at least one SBAR section first, then generate your report.",
-      },
-      ht: {
-        brand: "NurseChart Pro",
-        badge: "Fèt pou enfimyè",
-        headline: "Fè charting pi entelijan. Fini pi vit.",
-        subheadline:
-          "Kreye nòt enfimyè ak rapò SBAR byen òganize nan kèk segond ak yon workflow ki pi pwòp.",
-        noteTitle: "Zouti pou Ekri Nòt Enfimyè",
-        noteSubtitle:
-          "Antre detay rapid sou pasyan an, sa ki fèt, ak repons pasyan an. Zouti a ap prepare yon bèl nòt pou ou.",
-        notePlaceholder:
-          "Egzanp: Pasyan an plenyen doulè 8/10 nan do anba. Tansyon 148/92. Medikaman doulè PRN bay jan yo te bay lòd. Pasyan an repositionnen pou konfò. Doktè a enfòme. Pasyan an ap repoze nan kabann ak bouton apèl la bò kote li.",
-        noteButton: "Jenere Nòt Enfimyè",
-        noteClear: "Efase",
-        noteOutputTitle: "Nòt Enfimyè Jenere",
-        sbarTitle: "Jeneratè SBAR",
-        sbarSubtitle:
-          "Ranpli enfòmasyon prensipal yo epi kreye yon rapò handoff ki byen estriktire.",
-        situation: "Sitiyasyon",
-        situationPlaceholder:
-          "Egzanp: Pasyan an di souf li ap vin pi kout lè l ap mache.",
-        background: "Background",
-        backgroundPlaceholder:
-          "Egzanp: Gen istwa CHF, admèt depi 2 jou, sou 2L oksijèn nan nen.",
-        assessment: "Evalyasyon",
-        assessmentPlaceholder:
-          "Egzanp: Respirasyon difisil, O2 sat 89% sou 2L, gen crackles nan toude poumon.",
-        recommendation: "Rekòmandasyon",
-        recommendationPlaceholder:
-          "Egzanp: Mande evalyasyon, petèt ajisteman oksijèn, ak lòt lòd.",
-        sbarButton: "Jenere SBAR",
-        sbarOutputTitle: "Rapò SBAR Jenere",
-        chooseLanguage: "Lang",
-        english: "Anglè",
-        creole: "Kreyòl Ayisyen",
-        featuresTitle: "Poukisa NurseChart Pro",
-        feature1: "Dokimantasyon pi rapid",
-        feature2: "Kominikasyon handoff pi klè",
-        feature3: "Fèt pou workflow reyèl enfimyè yo",
-        footer: "NurseChart Pro • Sipò dokimantasyon pou enfimyè ki okipe anpil",
-        noteFallback:
-          "Antre kèk detay sou pasyan an anvan ou jenere nòt la.",
-        sbarFallback:
-          "Ranpli omwen yon seksyon SBAR anvan ou jenere rapò a.",
-      },
+  useEffect(() => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      setStatus("Mic not supported here. Best results: iPhone Safari.");
+      return;
+    }
+
+    const rec = new SpeechRecognition();
+    rec.continuous = true;
+    rec.interimResults = false;
+    rec.lang = "en-US";
+
+    rec.onstart = function () {
+      setIsListening(true);
+      setStatus(
+        noteType === "sbar"
+          ? `Listening to ${activeSbarField}`
+          : "Listening to rough notes"
+      );
     };
 
-    return content[language];
-  }, [language]);
+    rec.onresult = function (event) {
+      let transcript = "";
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript + " ";
+      }
 
-  function generateNote() {
-    const cleaned = noteFacts.trim();
+      const finalText = cleanText(transcript.trim(), inputLanguage);
+      if (!finalText) return;
 
-    if (!cleaned) {
-      setNoteOutput(text.noteFallback);
-      return;
+      if (noteType === "sbar") {
+        setSbarFields((prev) => ({
+          ...prev,
+          [activeSbarField]: prev[activeSbarField]
+            ? prev[activeSbarField] + " " + finalText
+            : finalText,
+        }));
+      } else {
+        setRoughNotes((prev) => (prev ? prev + ", " + finalText : finalText));
+      }
+
+      setStatus("Dictation captured.");
+    };
+
+    rec.onerror = function () {
+      setIsListening(false);
+      setStatus("Dictation error.");
+    };
+
+    rec.onend = function () {
+      setIsListening(false);
+      setStatus("Stopped.");
+    };
+
+    recognitionRef.current = rec;
+
+    return () => {
+      try {
+        rec.stop();
+      } catch (e) {}
+    };
+  }, [noteType, activeSbarField, inputLanguage]);
+
+  const startListening = async function () {
+    try {
+      if (navigator.mediaDevices?.getUserMedia) {
+        await navigator.mediaDevices.getUserMedia({ audio: true });
+      }
+      recognitionRef.current?.start();
+    } catch (e) {
+      setStatus("Microphone permission was denied or unavailable.");
     }
-
-    if (language === "ht") {
-      setNoteOutput(
-        `Nòt Enfimyè:\n\nPasyan an te evalye epi obsève pandan swen an. Dapre enfòmasyon ki antre yo: ${cleaned}\n\nSwen ak entèvansyon yo te bay jan sa te apwopriye. Pasyan an te kontinye siveye pou chanjman nan kondisyon li, sekirite li, ak repons li ak swen yo. Plan swen an ap kontinye selon bezwen pasyan an ak lòd ki an plas.`
-      );
-      return;
-    }
-
-    setNoteOutput(
-      `Nursing Note:\n\nPatient assessed and monitored during this shift. Based on the information provided: ${cleaned}\n\nAppropriate nursing interventions were implemented as indicated. Patient response was observed and ongoing monitoring will continue for changes in condition, safety, and comfort. Plan of care remains in progress per current orders and patient needs.`
-    );
-  }
-
-  function generateSBAR() {
-    const hasAnyInput =
-      situation.trim() ||
-      background.trim() ||
-      assessment.trim() ||
-      recommendation.trim();
-
-    if (!hasAnyInput) {
-      setSbarOutput(text.sbarFallback);
-      return;
-    }
-
-    if (language === "ht") {
-      setSbarOutput(
-        `SBAR\n\n` +
-          `Sitiyasyon:\n${situation.trim() || "Pa gen enfòmasyon antre."}\n\n` +
-          `Background:\n${background.trim() || "Pa gen enfòmasyon antre."}\n\n` +
-          `Evalyasyon:\n${assessment.trim() || "Pa gen enfòmasyon antre."}\n\n` +
-          `Rekòmandasyon:\n${recommendation.trim() || "Pa gen enfòmasyon antre."}`
-      );
-      return;
-    }
-
-    setSbarOutput(
-      `SBAR\n\n` +
-        `Situation:\n${situation.trim() || "No information entered."}\n\n` +
-        `Background:\n${background.trim() || "No information entered."}\n\n` +
-        `Assessment:\n${assessment.trim() || "No information entered."}\n\n` +
-        `Recommendation:\n${recommendation.trim() || "No information entered."}`
-    );
-  }
-
-  function clearAll() {
-    setNoteFacts("");
-    setNoteOutput("");
-    setSituation("");
-    setBackground("");
-    setAssessment("");
-    setRecommendation("");
-    setSbarOutput("");
-  }
-
-  const styles = {
-    page: {
-      minHeight: "100vh",
-      background:
-        "linear-gradient(180deg, #f4f8ff 0%, #eef6f3 50%, #ffffff 100%)",
-      color: "#132238",
-      fontFamily:
-        'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-      padding: "24px",
-    },
-    shell: {
-      maxWidth: "1200px",
-      margin: "0 auto",
-    },
-    topbar: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      gap: "16px",
-      flexWrap: "wrap",
-      marginBottom: "28px",
-    },
-    brandWrap: {
-      display: "flex",
-      flexDirection: "column",
-      gap: "8px",
-    },
-    badge: {
-      display: "inline-block",
-      background: "#dff4ea",
-      color: "#155b3d",
-      borderRadius: "999px",
-      padding: "8px 14px",
-      fontSize: "13px",
-      fontWeight: 700,
-      width: "fit-content",
-    },
-    brand: {
-      margin: 0,
-      fontSize: "32px",
-      fontWeight: 800,
-      letterSpacing: "-0.02em",
-    },
-    langBox: {
-      background: "#ffffff",
-      border: "1px solid #d9e4f2",
-      borderRadius: "16px",
-      padding: "14px",
-      minWidth: "220px",
-      boxShadow: "0 10px 30px rgba(19,34,56,0.06)",
-    },
-    label: {
-      display: "block",
-      fontSize: "13px",
-      fontWeight: 700,
-      marginBottom: "8px",
-      color: "#38506b",
-    },
-    select: {
-      width: "100%",
-      padding: "12px",
-      borderRadius: "12px",
-      border: "1px solid #cbd8e6",
-      background: "#fff",
-      fontSize: "15px",
-    },
-    hero: {
-      background: "rgba(255,255,255,0.82)",
-      border: "1px solid #e2ebf5",
-      borderRadius: "24px",
-      padding: "30px",
-      boxShadow: "0 18px 50px rgba(19,34,56,0.08)",
-      marginBottom: "24px",
-    },
-    headline: {
-      margin: "0 0 12px 0",
-      fontSize: "44px",
-      lineHeight: 1.05,
-      letterSpacing: "-0.03em",
-      maxWidth: "720px",
-    },
-    subheadline: {
-      margin: 0,
-      fontSize: "18px",
-      lineHeight: 1.6,
-      color: "#49637f",
-      maxWidth: "760px",
-    },
-    features: {
-      display: "grid",
-      gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-      gap: "14px",
-      marginTop: "24px",
-    },
-    featureCard: {
-      background: "#f8fbff",
-      border: "1px solid #dce8f4",
-      borderRadius: "18px",
-      padding: "16px",
-      fontWeight: 600,
-      color: "#1f3850",
-    },
-    toolGrid: {
-      display: "grid",
-      gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-      gap: "20px",
-      marginTop: "20px",
-    },
-    card: {
-      background: "#ffffff",
-      border: "1px solid #dfe9f3",
-      borderRadius: "24px",
-      padding: "22px",
-      boxShadow: "0 16px 40px rgba(19,34,56,0.06)",
-    },
-    cardTitle: {
-      margin: "0 0 8px 0",
-      fontSize: "24px",
-      fontWeight: 800,
-    },
-    cardText: {
-      margin: "0 0 16px 0",
-      color: "#5a728d",
-      lineHeight: 1.6,
-      fontSize: "15px",
-    },
-    textarea: {
-      width: "100%",
-      minHeight: "140px",
-      borderRadius: "16px",
-      border: "1px solid #cad8e6",
-      padding: "14px",
-      fontSize: "15px",
-      lineHeight: 1.5,
-      resize: "vertical",
-      boxSizing: "border-box",
-      outline: "none",
-      marginBottom: "14px",
-    },
-    smallTextarea: {
-      width: "100%",
-      minHeight: "96px",
-      borderRadius: "14px",
-      border: "1px solid #cad8e6",
-      padding: "12px",
-      fontSize: "15px",
-      lineHeight: 1.5,
-      resize: "vertical",
-      boxSizing: "border-box",
-      outline: "none",
-      marginBottom: "12px",
-    },
-    buttonRow: {
-      display: "flex",
-      gap: "10px",
-      flexWrap: "wrap",
-      marginBottom: "16px",
-    },
-    primaryBtn: {
-      background: "#0f62fe",
-      color: "#fff",
-      border: "none",
-      borderRadius: "14px",
-      padding: "12px 18px",
-      fontSize: "15px",
-      fontWeight: 700,
-      cursor: "pointer",
-    },
-    secondaryBtn: {
-      background: "#eef4fb",
-      color: "#1f3f63",
-      border: "1px solid #cfdded",
-      borderRadius: "14px",
-      padding: "12px 18px",
-      fontSize: "15px",
-      fontWeight: 700,
-      cursor: "pointer",
-    },
-    outputWrap: {
-      background: "#f7fbff",
-      border: "1px solid #dbe7f2",
-      borderRadius: "18px",
-      padding: "16px",
-    },
-    outputTitle: {
-      margin: "0 0 10px 0",
-      fontSize: "16px",
-      fontWeight: 800,
-      color: "#1c3854",
-    },
-    outputText: {
-      margin: 0,
-      whiteSpace: "pre-wrap",
-      lineHeight: 1.7,
-      color: "#23384d",
-      fontSize: "15px",
-    },
-    footer: {
-      textAlign: "center",
-      color: "#5c728b",
-      fontSize: "14px",
-      marginTop: "28px",
-      paddingBottom: "16px",
-    },
   };
 
+  const stopListening = function () {
+    try {
+      recognitionRef.current?.stop();
+    } catch (e) {}
+    setIsListening(false);
+    setStatus("Stopped.");
+  };
+
+  const copyOutput = async function () {
+    if (!output) return;
+    try {
+      await navigator.clipboard.writeText(output);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1200);
+    } catch (e) {
+      setCopied(false);
+    }
+  };
+
+  const clearAll = function () {
+    setRoughNotes("");
+    setOutput("");
+    setCopied(false);
+    setSbarFields({
+      situation: "",
+      background: "",
+      assessment: "",
+      recommendation: "",
+    });
+    setActiveSbarField("situation");
+    setStatus("Cleared.");
+  };
+
+  const pasteAndGenerate = async function () {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (!text.trim()) {
+        setStatus("Clipboard is empty.");
+        return;
+      }
+      setRoughNotes(text);
+      setOutput(
+        generateNoteFromText(
+          text,
+          noteType,
+          substanceMode,
+          sbarFields,
+          inputLanguage
+        )
+      );
+      setStatus("Clipboard pasted and note generated.");
+      setCopied(false);
+    } catch (e) {
+      setStatus("Paste was blocked. Paste manually, then tap Generate.");
+    }
+  };
+
+  const handleGenerate = function () {
+    setOutput(
+      generateNoteFromText(
+        roughNotes,
+        noteType,
+        substanceMode,
+        sbarFields,
+        inputLanguage
+      )
+    );
+  };
+
+  function cleanText(text, language) {
+    let t = String(text || "")
+      .trim()
+      .toLowerCase();
+
+    if (!t) return "";
+
+    t = t.replace(/\s+/g, " ");
+
+    // broken dictation cleanup
+    t = t.replace(/reside\s*t/g, "resident");
+    t = t.replace(/orie\s*nted|orie\s*ted/g, "oriented");
+    t = t.replace(/de\s*ni(?:e)?s/g, "denies");
+    t = t.replace(/pai\s*n/g, "pain");
+    t = t.replace(/lu\s*ngs/g, "lungs");
+    t = t.replace(/dimi\s*nished/g, "diminished");
+    t = t.replace(/vita\s*s/g, "vitals");
+    t = t.replace(/withi\s*n/g, "within");
+    t = t.replace(/norma\s*l/g, "normal");
+    t = t.replace(/limit\s*s/g, "limits");
+    t = t.replace(/(\w)\.(\w)/g, "$1$2");
+    t = t.replace(/[.]+/g, " ");
+    t = t.replace(/\s+/g, " ");
+
+    const apply = (pattern, replacement) => {
+      t = t.replace(pattern, replacement);
+    };
+
+    if (language === "auto" || language === "spanish") {
+      apply(/\bsin dolor\b/g, "denies pain");
+      apply(/\bdolor\b/g, "pain");
+      apply(/\bca[ií]da\b/g, "fall");
+      apply(/\bsignos vitales\b/g, "vitals");
+      apply(/\bdentro de l[ií]mites normales\b/g, "within normal limits");
+      apply(/\bsin dificultad para respirar\b/g, "no sob");
+      apply(/\bmedicamentos dados\b/g, "meds given");
+      apply(/\bfamilia notificada\b/g, "family notified");
+      apply(/\bproveedor notificado\b/g, "provider notified");
+    }
+
+    if (language === "auto" || language === "french") {
+      apply(/\bpas de douleur\b/g, "denies pain");
+      apply(/\bdouleur\b/g, "pain");
+      apply(/\bchute\b/g, "fall");
+      apply(/\bsignes vitaux\b/g, "vitals");
+      apply(/\bpas de dyspn[ée]e\b/g, "no sob");
+      apply(/\bfamille notifi[ée]e\b/g, "family notified");
+      apply(/\bm[ée]decin notifi[ée]?\b/g, "provider notified");
+    }
+
+    if (language === "auto" || language === "filipino") {
+      apply(/\bwalang sakit\b/g, "denies pain");
+      apply(/\bsakit\b/g, "pain");
+      apply(/\bwalang hingal\b/g, "no sob");
+      apply(/\bnahulog\b/g, "fall");
+      apply(/\bpamilya naabisuhan\b/g, "family notified");
+    }
+
+    if (language === "auto" || language === "mandarin") {
+      apply(/\bbu teng\b/g, "denies pain");
+      apply(/\bmei you tong\b/g, "denies pain");
+      apply(/\bmei you hu xi kun nan\b/g, "no sob");
+      apply(/\bdie dao\b/g, "fall");
+    }
+
+    if (language === "auto" || language === "yoruba") {
+      apply(/\bko si irora\b/g, "denies pain");
+      apply(/\birora\b/g, "pain");
+      apply(/\bko si emi lile\b/g, "no sob");
+      apply(/\bsubu\b/g, "fall");
+    }
+
+    if (language === "auto" || language === "igbo") {
+      apply(/\benweghi mgbu\b/g, "denies pain");
+      apply(/\bmgbu\b/g, "pain");
+      apply(/\bdaara\b/g, "fall");
+    }
+
+    if (language === "auto" || language === "pidgin") {
+      apply(/\bno pain\b/g, "denies pain");
+      apply(/\be no get pain\b/g, "denies pain");
+      apply(/\be dey stable\b/g, "vitals stable");
+      apply(/\bno dey short of breath\b/g, "no sob");
+      apply(/\bfall down\b/g, "fall");
+    }
+
+    return t.trim();
+  }
+
+  function titleCaseSentence(text) {
+    const cleaned = cleanText(text, inputLanguage);
+    if (!cleaned) return "";
+    return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+  }
+
+  function extractSmartPhrases(text, language) {
+    const t = cleanText(text, language);
+    const phrases = [];
+
+    if (
+      (t.includes("alert") || t.includes("oriented")) &&
+      (t.includes("3") || t.includes("three"))
+    ) {
+      phrases.push("Resident alert and oriented x3.");
+    }
+    if (
+      (t.includes("alert") || t.includes("oriented")) &&
+      (t.includes("4") || t.includes("four"))
+    ) {
+      phrases.push("Resident alert and oriented x4.");
+    }
+    if (t.includes("denies pain") || t.includes("no pain")) {
+      phrases.push("Denies pain.");
+    }
+    if (t.includes("no distress") || t.includes("no acute distress")) {
+      phrases.push("No acute distress noted at time of assessment.");
+    }
+    if (t.includes("vitals") && t.includes("normal")) {
+      phrases.push("Vital signs within normal limits.");
+    } else if (
+      t.includes("vitals") ||
+      t.includes("vss") ||
+      t.includes("vs stable")
+    ) {
+      phrases.push("Vital signs stable.");
+    }
+    if (
+      t.includes("meds given") ||
+      t.includes("medications given") ||
+      t.includes("routine meds")
+    ) {
+      phrases.push("Routine medications administered as ordered.");
+    }
+    if (t.includes("pain med")) {
+      phrases.push("Pain medication administered as ordered.");
+    }
+    if (t.includes("prn")) {
+      phrases.push("PRN medication administered as ordered.");
+    }
+    if (t.includes("no sob") || t.includes("denies sob")) {
+      phrases.push("No shortness of breath reported.");
+    }
+    if (t.includes("sob")) {
+      phrases.push("Shortness of breath noted.");
+    }
+    if (
+      t.includes("lungs diminished") ||
+      t.includes("lung sounds diminished")
+    ) {
+      phrases.push("Lung sounds diminished.");
+    }
+    if (t.includes("crackles")) {
+      phrases.push("Crackles noted on assessment.");
+    }
+    if (t.includes("wheezing")) {
+      phrases.push("Wheezing noted on assessment.");
+    }
+    if (t.includes("cough")) {
+      phrases.push("Cough noted.");
+    }
+    if (t.includes("poor appetite")) {
+      phrases.push("Poor appetite noted.");
+    }
+    if (t.includes("ate well")) {
+      phrases.push("Resident tolerated meals well.");
+    }
+    if (t.includes("incontinent")) {
+      phrases.push("Resident incontinent of bowel and bladder.");
+    }
+    if (t.includes("continent")) {
+      phrases.push("Resident continent of bowel and bladder.");
+    }
+    if (t.includes("foley intact")) {
+      phrases.push("Foley catheter intact and patent.");
+    }
+    if (t.includes("foley patent")) {
+      phrases.push("Foley catheter patent.");
+    }
+    if (t.includes("fluid restriction")) {
+      phrases.push("Resident remains on fluid restriction as ordered.");
+    }
+    if (t.includes("turned and repositioned")) {
+      phrases.push("Resident turned and repositioned as tolerated.");
+    }
+    if (t.includes("wound care")) {
+      phrases.push("Wound care completed as ordered.");
+    }
+    if (t.includes("dressing changed")) {
+      phrases.push("Dressing changed as ordered.");
+    }
+    if (
+      t.includes("provider notified") ||
+      t.includes("doctor notified") ||
+      t.includes("md notified") ||
+      t.includes("np notified")
+    ) {
+      phrases.push("Provider notified.");
+    }
+    if (
+      t.includes("family notified") ||
+      t.includes("family aware") ||
+      t.includes("family made aware")
+    ) {
+      phrases.push("Family notified.");
+    }
+    if (t.includes("new order")) {
+      phrases.push("New orders received.");
+    }
+    if (t.includes("monitor closely") || t.includes("continue to monitor")) {
+      phrases.push("Continue to monitor resident closely.");
+    }
+    if (
+      t.includes("fall") ||
+      t.includes("found on floor") ||
+      t.includes("found sitting on floor")
+    ) {
+      phrases.push("Resident experienced unwitnessed fall.");
+    }
+    if (t.includes("denies hitting head") || t.includes("did not hit head")) {
+      phrases.push("Resident denies hitting head.");
+    }
+    if (t.includes("no injury") || t.includes("no apparent injury")) {
+      phrases.push("No apparent injury noted.");
+    }
+    if (t.includes("neuro checks")) {
+      phrases.push("Neuro checks initiated.");
+    }
+    if (
+      t.includes("sent to er") ||
+      t.includes("transfer to er") ||
+      t.includes("transferred to er")
+    ) {
+      phrases.push("Resident transferred to ER for further evaluation.");
+    }
+
+    if (!phrases.length && t) {
+      phrases.push(titleCaseSentence(t) + ".");
+    }
+
+    return [...new Set(phrases)];
+  }
+
+  function buildProgress(text, substance, language) {
+    const phrases = extractSmartPhrases(text, language);
+    let result = "Resident assessed this shift. " + phrases.join(" ");
+
+    if (substance) {
+      result +=
+        " Vital signs reviewed and remain stable unless otherwise indicated. Care provided in accordance with current plan of care. Resident tolerated interventions without difficulty. No acute distress observed at time of assessment. Continue to monitor closely and report any changes in condition to provider as indicated.";
+    }
+
+    return result;
+  }
+
+  function deriveSbarFromSituation(situationText, language) {
+    const t = cleanText(situationText, language);
+    const background = [];
+    const assessment = [];
+    const recommendation = [];
+
+    if (t.includes("fall")) {
+      background.push("Resident found after reported fall event.");
+      recommendation.push(
+        "Provider notification and ongoing monitoring indicated."
+      );
+    }
+    if (t.includes("denies pain")) {
+      assessment.push("Denies pain.");
+    }
+    if (t.includes("denies hitting head")) {
+      assessment.push("Resident denies hitting head.");
+    }
+    if (t.includes("no injury") || t.includes("no apparent injury")) {
+      assessment.push("No apparent injury noted.");
+    }
+    if (t.includes("vitals") && t.includes("normal")) {
+      assessment.push("Vital signs within normal limits.");
+    } else if (t.includes("vitals")) {
+      assessment.push("Vital signs stable.");
+    }
+    if (t.includes("provider notified")) {
+      recommendation.push("Provider notified.");
+    }
+    if (t.includes("family notified") || t.includes("family aware")) {
+      recommendation.push("Family notified.");
+    }
+    if (t.includes("neuro checks")) {
+      recommendation.push("Neuro checks initiated.");
+    }
+
+    return {
+      background: background.join(" "),
+      assessment: assessment.join(" "),
+      recommendation: recommendation.join(" "),
+    };
+  }
+
+  function buildSBAR(fields, substance, language) {
+    const derived = deriveSbarFromSituation(fields.situation, language);
+
+    const bSource = fields.background || derived.background;
+    const aSource = fields.assessment || derived.assessment;
+    const rSource = fields.recommendation || derived.recommendation;
+
+    const s =
+      extractSmartPhrases(fields.situation, language).join(" ") ||
+      "No situation entered.";
+    const b =
+      extractSmartPhrases(bSource, language).join(" ") ||
+      "No background entered.";
+    const a =
+      extractSmartPhrases(aSource, language).join(" ") ||
+      "No assessment entered.";
+    const r =
+      extractSmartPhrases(rSource, language).join(" ") ||
+      "No recommendation entered.";
+
+    let result = `Situation: ${s} Background: ${b} Assessment: ${a} Recommendation: ${r}`;
+
+    if (substance) {
+      result +=
+        " Communication completed using SBAR format. Resident status and assessment findings were relayed clearly. Follow-up recommendations and monitoring needs remain in place.";
+    }
+
+    return result;
+  }
+
+  function buildChange(text, substance, language) {
+    let result =
+      "Change in Condition: " +
+      extractSmartPhrases(text, language).join(" ") +
+      " Provider follow-up and continued monitoring remain in place.";
+
+    if (substance) {
+      result +=
+        " Resident reassessed following noted change in condition. Clinical findings reviewed and documented. Ongoing monitoring continues with provider notification as indicated.";
+    }
+
+    return result;
+  }
+
+  function buildFall(text, substance, language) {
+    let result =
+      "Fall Note: " +
+      extractSmartPhrases(text, language).join(" ") +
+      " Resident assessed following fall event. Appropriate notifications completed and monitoring initiated.";
+
+    if (substance) {
+      result +=
+        " Post-fall assessment completed promptly. No additional complications noted unless otherwise stated above. Continue post-fall protocol and ongoing monitoring.";
+    }
+
+    return result;
+  }
+
+  function buildAdmission(text, substance, language) {
+    let result =
+      "Admission Note: Resident admitted to facility and assessed upon arrival. " +
+      extractSmartPhrases(text, language).join(" ");
+
+    if (substance) {
+      result +=
+        " Admission assessment completed head to toe. Baseline status established. Care plan initiated and resident will continue to be monitored for any changes in condition.";
+    }
+
+    return result;
+  }
+
+  function generateNoteFromText(text, type, substance, fields, language) {
+    if (type === "sbar") return buildSBAR(fields, substance, language);
+
+    const cleaned = cleanText(text, language);
+    if (!cleaned) return "Please enter rough notes first.";
+
+    if (type === "change") return buildChange(cleaned, substance, language);
+    if (type === "fall") return buildFall(cleaned, substance, language);
+    if (type === "admission")
+      return buildAdmission(cleaned, substance, language);
+    return buildProgress(cleaned, substance, language);
+  }
+
+  const inputStyle = (field) => ({
+    width: "100%",
+    minHeight: 95,
+    borderRadius: 14,
+    border:
+      activeSbarField === field ? "2px solid #7c3aed" : "1px solid #d8b4fe",
+    padding: 12,
+    fontSize: 14,
+    boxSizing: "border-box",
+    outline: "none",
+    background: activeSbarField === field ? "#faf5ff" : "#fff",
+  });
+
   return (
-    <div style={styles.page}>
-      <div style={styles.shell}>
-        <div style={styles.topbar}>
-          <div style={styles.brandWrap}>
-            <span style={styles.badge}>{text.badge}</span>
-            <h1 style={styles.brand}>{text.brand}</h1>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "linear-gradient(to bottom, #f3e8ff, #ffffff)",
+        padding: 20,
+        fontFamily: "Arial, sans-serif",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 1050,
+          margin: "0 auto",
+          background: "#fff",
+          borderRadius: 28,
+          padding: 20,
+          boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
+          border: "1px solid #e9d5ff",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 12,
+            flexWrap: "wrap",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div
+              style={{
+                width: 50,
+                height: 50,
+                borderRadius: 18,
+                background: "linear-gradient(135deg, #9333ea, #4f46e5)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "white",
+                fontSize: 22,
+              }}
+            >
+              🩺
+            </div>
+            <div>
+              <h2 style={{ color: "#6b21a8", margin: 0 }}>
+                NurseChart Pro by Vanessa
+              </h2>
+              <p
+                style={{ margin: "6px 0 0 0", color: "#6b7280", fontSize: 14 }}
+              >
+                Built by a nurse, for nurses.
+              </p>
+            </div>
           </div>
 
-          <div style={styles.langBox}>
-            <label style={styles.label}>{text.chooseLanguage}</label>
-            <select
-              style={styles.select}
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-            >
-              <option value="en">{text.english}</option>
-              <option value="ht">{text.creole}</option>
-            </select>
+          <div
+            style={{
+              background: "#f5f3ff",
+              color: "#6b21a8",
+              padding: "8px 12px",
+              borderRadius: 16,
+              fontSize: 12,
+              fontWeight: 700,
+            }}
+          >
+            Master Version
           </div>
         </div>
 
-        <section style={styles.hero}>
-          <h2 style={styles.headline}>{text.headline}</h2>
-          <p style={styles.subheadline}>{text.subheadline}</p>
+        <div style={{ marginTop: 20 }}>
+          <label style={labelStyle}>Note Type</label>
+          <select
+            value={noteType}
+            onChange={(e) => setNoteType(e.target.value)}
+            style={selectStyle}
+          >
+            <option value="progress">Progress Note</option>
+            <option value="sbar">SBAR</option>
+            <option value="change">Change in Condition</option>
+            <option value="fall">Fall Note</option>
+            <option value="admission">Admission</option>
+          </select>
+        </div>
 
-          <div style={styles.features}>
-            <div style={styles.featureCard}>{text.feature1}</div>
-            <div style={styles.featureCard}>{text.feature2}</div>
-            <div style={styles.featureCard}>{text.feature3}</div>
+        <div style={{ marginTop: 16 }}>
+          <label style={labelStyle}>Language Selector</label>
+          <select
+            value={inputLanguage}
+            onChange={(e) => setInputLanguage(e.target.value)}
+            style={selectStyle}
+          >
+            <option value="auto">Auto Detect</option>
+            <option value="english">English</option>
+            <option value="spanish">Spanish</option>
+            <option value="french">French</option>
+            <option value="filipino">Filipino</option>
+            <option value="mandarin">Mandarin</option>
+            <option value="yoruba">Yoruba</option>
+            <option value="igbo">Igbo</option>
+            <option value="pidgin">Nigerian Pidgin</option>
+            <option value="creole">Haitian Creole</option>
+          </select>
+        </div>
+
+        <div style={{ marginTop: 14 }}>
+          <button
+            onClick={() => setSubstanceMode(!substanceMode)}
+            style={greenButton}
+          >
+            {substanceMode ? "Substance ON" : "Add Substance"}
+          </button>
+        </div>
+
+        {noteType === "sbar" ? (
+          <div style={{ marginTop: 18 }}>
+            <div
+              style={{
+                marginBottom: 10,
+                padding: 12,
+                borderRadius: 14,
+                background: "#faf5ff",
+                border: "1px solid #e9d5ff",
+                color: "#6b21a8",
+                fontWeight: 600,
+              }}
+            >
+              Active mic box: {activeSbarField}
+            </div>
+
+            <div
+              style={{
+                display: "grid",
+                gap: 12,
+                gridTemplateColumns: "1fr 1fr",
+              }}
+            >
+              <div>
+                <label style={labelStyle}>Situation</label>
+                <textarea
+                  value={sbarFields.situation}
+                  onFocus={() => setActiveSbarField("situation")}
+                  onClick={() => setActiveSbarField("situation")}
+                  onChange={(e) =>
+                    setSbarFields((prev) => ({
+                      ...prev,
+                      situation: e.target.value,
+                    }))
+                  }
+                  placeholder="What is happening right now?"
+                  style={inputStyle("situation")}
+                />
+              </div>
+
+              <div>
+                <label style={labelStyle}>Background</label>
+                <textarea
+                  value={sbarFields.background}
+                  onFocus={() => setActiveSbarField("background")}
+                  onClick={() => setActiveSbarField("background")}
+                  onChange={(e) =>
+                    setSbarFields((prev) => ({
+                      ...prev,
+                      background: e.target.value,
+                    }))
+                  }
+                  placeholder="Relevant history or context"
+                  style={inputStyle("background")}
+                />
+              </div>
+
+              <div>
+                <label style={labelStyle}>Assessment</label>
+                <textarea
+                  value={sbarFields.assessment}
+                  onFocus={() => setActiveSbarField("assessment")}
+                  onClick={() => setActiveSbarField("assessment")}
+                  onChange={(e) =>
+                    setSbarFields((prev) => ({
+                      ...prev,
+                      assessment: e.target.value,
+                    }))
+                  }
+                  placeholder="What you found"
+                  style={inputStyle("assessment")}
+                />
+              </div>
+
+              <div>
+                <label style={labelStyle}>Recommendation</label>
+                <textarea
+                  value={sbarFields.recommendation}
+                  onFocus={() => setActiveSbarField("recommendation")}
+                  onClick={() => setActiveSbarField("recommendation")}
+                  onChange={(e) =>
+                    setSbarFields((prev) => ({
+                      ...prev,
+                      recommendation: e.target.value,
+                    }))
+                  }
+                  placeholder="What was done or needed"
+                  style={inputStyle("recommendation")}
+                />
+              </div>
+            </div>
           </div>
-        </section>
-
-        <section style={styles.toolGrid}>
-          <div style={styles.card}>
-            <h3 style={styles.cardTitle}>{text.noteTitle}</h3>
-            <p style={styles.cardText}>{text.noteSubtitle}</p>
-
+        ) : (
+          <div style={{ marginTop: 18 }}>
+            <label style={labelStyle}>Rough Notes / What You Say</label>
             <textarea
-              style={styles.textarea}
-              placeholder={text.notePlaceholder}
-              value={noteFacts}
-              onChange={(e) => setNoteFacts(e.target.value)}
+              value={roughNotes}
+              onChange={(e) => setRoughNotes(e.target.value)}
+              placeholder="Speak or type your rough note here..."
+              style={textareaStyle}
             />
-
-            <div style={styles.buttonRow}>
-              <button style={styles.primaryBtn} onClick={generateNote}>
-                {text.noteButton}
-              </button>
-              <button style={styles.secondaryBtn} onClick={clearAll}>
-                {text.noteClear}
-              </button>
-            </div>
-
-            <div style={styles.outputWrap}>
-              <h4 style={styles.outputTitle}>{text.noteOutputTitle}</h4>
-              <p style={styles.outputText}>{noteOutput || "—"}</p>
-            </div>
           </div>
+        )}
 
-          <div style={styles.card}>
-            <h3 style={styles.cardTitle}>{text.sbarTitle}</h3>
-            <p style={styles.cardText}>{text.sbarSubtitle}</p>
+        <div
+          style={{
+            marginTop: 14,
+            borderRadius: 16,
+            border: "1px solid #d8b4fe",
+            background: "#f3e8ff",
+            padding: 12,
+            fontSize: 14,
+            color: "#6b21a8",
+            fontWeight: 600,
+          }}
+        >
+          {status}
+        </div>
 
-            <label style={styles.label}>{text.situation}</label>
-            <textarea
-              style={styles.smallTextarea}
-              placeholder={text.situationPlaceholder}
-              value={situation}
-              onChange={(e) => setSituation(e.target.value)}
-            />
+        <div
+          style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 16 }}
+        >
+          {!isListening ? (
+            <button onClick={startListening} style={purpleButton}>
+              🎤 Start Dictation
+            </button>
+          ) : (
+            <button onClick={stopListening} style={darkPurpleButton}>
+              Stop
+            </button>
+          )}
 
-            <label style={styles.label}>{text.background}</label>
-            <textarea
-              style={styles.smallTextarea}
-              placeholder={text.backgroundPlaceholder}
-              value={background}
-              onChange={(e) => setBackground(e.target.value)}
-            />
+          <button onClick={handleGenerate} style={blackButton}>
+            {noteType === "sbar" ? "Build SBAR" : "Generate"}
+          </button>
 
-            <label style={styles.label}>{text.assessment}</label>
-            <textarea
-              style={styles.smallTextarea}
-              placeholder={text.assessmentPlaceholder}
-              value={assessment}
-              onChange={(e) => setAssessment(e.target.value)}
-            />
+          <button onClick={pasteAndGenerate} style={greenButton}>
+            Paste + Generate
+          </button>
 
-            <label style={styles.label}>{text.recommendation}</label>
-            <textarea
-              style={styles.smallTextarea}
-              placeholder={text.recommendationPlaceholder}
-              value={recommendation}
-              onChange={(e) => setRecommendation(e.target.value)}
-            />
+          <button onClick={copyOutput} style={whiteButton}>
+            {copied ? "Copied" : "Copy"}
+          </button>
 
-            <div style={styles.buttonRow}>
-              <button style={styles.primaryBtn} onClick={generateSBAR}>
-                {text.sbarButton}
-              </button>
-              <button style={styles.secondaryBtn} onClick={clearAll}>
-                {text.noteClear}
-              </button>
-            </div>
+          <button onClick={clearAll} style={whiteButton}>
+            Clear
+          </button>
+        </div>
 
-            <div style={styles.outputWrap}>
-              <h4 style={styles.outputTitle}>{text.sbarOutputTitle}</h4>
-              <p style={styles.outputText}>{sbarOutput || "—"}</p>
-            </div>
-          </div>
-        </section>
+        <div
+          style={{
+            marginTop: 14,
+            borderRadius: 16,
+            border: "1px solid #fde68a",
+            background: "#fffbeb",
+            padding: 12,
+            fontSize: 14,
+            color: "#475569",
+          }}
+        >
+          Input can be rough, accented, or mixed-language. Output stays in clean
+          professional English.
+        </div>
 
-        <div style={styles.footer}>{text.footer}</div>
+        <div style={{ marginTop: 20 }}>
+          <label style={labelStyle}>Refined Output / Clean Note</label>
+          <textarea
+            value={output}
+            readOnly
+            style={{
+              ...textareaStyle,
+              background: "#f8fafc",
+              minHeight: 200,
+            }}
+          />
+        </div>
       </div>
     </div>
   );
 }
+
+const labelStyle = {
+  display: "block",
+  marginBottom: 8,
+  fontWeight: 700,
+  color: "#581c87",
+};
+
+const selectStyle = {
+  width: "100%",
+  padding: 12,
+  borderRadius: 14,
+  border: "1px solid #d8b4fe",
+  fontSize: 14,
+};
+
+const textareaStyle = {
+  width: "100%",
+  minHeight: 180,
+  borderRadius: 14,
+  border: "1px solid #d8b4fe",
+  padding: 12,
+  fontSize: 14,
+  boxSizing: "border-box",
+};
+
+const purpleButton = {
+  background: "#9333ea",
+  color: "#fff",
+  padding: "12px 16px",
+  border: "none",
+  borderRadius: 12,
+  fontWeight: 700,
+  cursor: "pointer",
+};
+
+const darkPurpleButton = {
+  background: "#6b21a8",
+  color: "#fff",
+  padding: "12px 16px",
+  border: "none",
+  borderRadius: 12,
+  fontWeight: 700,
+  cursor: "pointer",
+};
+
+const blackButton = {
+  background: "#111827",
+  color: "#fff",
+  padding: "12px 16px",
+  border: "none",
+  borderRadius: 12,
+  fontWeight: 700,
+  cursor: "pointer",
+};
+
+const greenButton = {
+  background: "#059669",
+  color: "#fff",
+  padding: "12px 16px",
+  border: "none",
+  borderRadius: 12,
+  fontWeight: 700,
+  cursor: "pointer",
+};
+
+const whiteButton = {
+  background: "#fff",
+  color: "#111827",
+  padding: "12px 16px",
+  border: "1px solid #d1d5db",
+  borderRadius: 12,
+  fontWeight: 700,
+  cursor: "pointer",
+};
+
+
