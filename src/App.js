@@ -652,7 +652,8 @@ if (inputLanguage === "auto") {
                 alignItems: "center",
                 justifyContent: "center",
                 color: "white",
-                fontSize: 22,
+                fontSize: 20,
+                fontWeight: 900,
               }}
             >
               NCP
