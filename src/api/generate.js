@@ -67,6 +67,19 @@ Clinical priority rules:
 - Keep important facts such as hit head, neuro checks started, and family notified when present.
 - Prefer specific nursing facts over generic chart wording.
 - Build the final note around what the nurse actually said.
+
+
+Writing style rules:
+- Avoid repeating "Resident" at the beginning of every sentence.
+- Use smooth professional nursing narrative flow.
+- Present the event first, then assessment, then interventions, then notifications, then monitoring plan.
+- Combine related facts into complete natural sentences.
+- Use varied sentence structure to avoid robotic wording.
+- Include clinically relevant assessment details when appropriate.
+- Use pronouns sparingly when useful for flow.
+- Sound like an experienced nurse wrote the note.
+
+},
         },
         {
           role: "user",
