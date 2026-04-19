@@ -659,12 +659,12 @@ if (inputLanguage === "auto") {
             </div>
             <div>
               <h2 style={{ color: "#6b21a8", margin: 0 }}>
-                NurseChart Pro by Vanessa
+                Nurse Chart Pro 
               </h2>
               <p
                 style={{ margin: "6px 0 0 0", color: "#6b7280", fontSize: 14 }}
               >
-                Built by a nurse, for nurses.
+                Built by nurse. Designed for nurses.
               </p>
             </div>
           </div>
