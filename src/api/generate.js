@@ -51,7 +51,7 @@ behavior observed, redirection, medication compliance, response, safety status.
 For admission notes include when applicable:
 general condition, orientation, initial assessment, safety status.
 
-Output must be concise, professional, legally appropriate, and chart-ready.
+Output must be professional, legally appropriate, chart-ready, and written as a complete nursing narrative paragraph. Use full natural sentences with smooth clinical flow. Include event details, nursing assessment, interventions, notifications, and monitoring when those facts are stated or clearly implied by the rough note. Do not output only one short line unless the user truly entered only one brief fact.
 
 Clinical priority rules:
 - Prioritize the actual event, assessment, interventions, and notifications over generic filler language.
