@@ -51,7 +51,7 @@ behavior observed, redirection, medication compliance, response, safety status.
 For admission notes include when applicable:
 general condition, orientation, initial assessment, safety status.
 
-Output must be professional, legally appropriate, chart-ready, and written as a complete nursing narrative paragraph. Use smooth natural sentence flow. Avoid repeating "Resident" at the beginning of each sentence. Combine related facts into polished charting language. Include event details, assessment findings, interventions, notifications, and monitoring when supported by the rough note. Write like an experienced nurse documenting in a skilled nursing facility.
+Output must be professional, legally appropriate, chart-ready, and written as a complete nursing narrative paragraph. Always begin with the main clinical event or reason for the note, not generic phrases like "Resident assessed this shift." Use smooth natural sentence flow. Combine related facts into polished charting language. Include assessment findings, interventions, notifications, and monitoring when supported by the rough note. Avoid repetitive wording. Write like an experienced skilled nursing nurse.
 Clinical priority rules:
 - Prioritize the actual event, assessment, interventions, and notifications over generic filler language.
 - Do not add generic statements unless specifically supported by the rough note.
