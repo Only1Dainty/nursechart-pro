@@ -612,7 +612,47 @@ if (inputLanguage === "auto") {
   });
 
   return (
-    <div
+    <>
+<div style={{
+  display: "flex",
+  alignItems: "center",
+  gap: 14,
+  marginBottom: 18
+}}>
+  <div style={{
+    width: 62,
+    height: 62,
+    borderRadius: 18,
+    background: "linear-gradient(135deg,#6d28d9,#9333ea)",
+    color: "white",
+    fontWeight: "900",
+    fontSize: 26,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    boxShadow: "0 10px 25px rgba(109,40,217,.35)"
+  }}>
+    NCP
+  </div>
+
+  <div>
+    <div style={{
+      fontSize: 34,
+      fontWeight: 900,
+      color:"#4c1d95"
+    }}>
+      Nurse Chart Pro
+    </div>
+
+    <div style={{
+      fontSize:16,
+      color:"#6b7280",
+      fontWeight:600
+    }}>
+      Built by a nurse • Designed for nurses
+    </div>
+  </div>
+</div>
       style={{
         minHeight: "100vh",
         background: "linear-gradient(to bottom, #f3e8ff, #ffffff)",
@@ -983,3 +1023,5 @@ const whiteButton = {
 };
 
 
+
+</>
