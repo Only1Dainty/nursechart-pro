@@ -52,6 +52,21 @@ For admission notes include when applicable:
 general condition, orientation, initial assessment, safety status.
 
 Output must be concise, professional, legally appropriate, and chart-ready.
+
+Clinical priority rules:
+- Prioritize the actual event, assessment, interventions, and notifications over generic filler language.
+- Do not add generic statements unless specifically supported by the rough note.
+- If the note describes a fall, prioritize:
+  1. how resident was found
+  2. witnessed or unwitnessed status
+  3. head strike or injury mention
+  4. nursing assessment performed
+  5. neuro checks if mentioned
+  6. family/provider notified
+  7. continued monitoring
+- Keep important facts such as hit head, neuro checks started, and family notified when present.
+- Prefer specific nursing facts over generic chart wording.
+- Build the final note around what the nurse actually said.
         },
         {
           role: "user",
