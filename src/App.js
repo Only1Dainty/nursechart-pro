@@ -32,7 +32,48 @@ export default function App() {
     const rec = new SpeechRecognition();
     rec.continuous = true;
     rec.interimResults = false;
-    rec.lang = "en-US";
+  rec.lang = "en-US";
+rec.maxAlternatives = 5;
+
+if (inputLanguage === "auto") {
+  rec.lang = "en-US";
+} else if (inputLanguage === "english") {
+  rec.lang = "en-US";
+} else if (inputLanguage === "spanish") {
+  rec.lang = "es-US";
+} else if (inputLanguage === "french") {
+  rec.lang = "fr-FR";
+} else if (inputLanguage === "creole") {
+  rec.lang = "fr-FR";
+} else if (inputLanguage === "tagalog") {
+  rec.lang = "fil-PH";
+} else if (inputLanguage === "arabic") {
+  rec.lang = "ar-SA";
+} else if (inputLanguage === "portuguese") {
+  rec.lang = "pt-BR";
+} else if (inputLanguage === "hindi") {
+  rec.lang = "hi-IN";
+} else if (inputLanguage === "urdu") {
+  rec.lang = "ur-PK";
+} else if (inputLanguage === "mandarin") {
+  rec.lang = "zh-CN";
+} else if (inputLanguage === "vietnamese") {
+  rec.lang = "vi-VN";
+} else if (inputLanguage === "russian") {
+  rec.lang = "ru-RU";
+} else if (inputLanguage === "japanese") {
+  rec.lang = "ja-JP";
+} else if (inputLanguage === "korean") {
+  rec.lang = "ko-KR";
+} else if (inputLanguage === "german") {
+  rec.lang = "de-DE";
+} else if (inputLanguage === "italian") {
+  rec.lang = "it-IT";
+} else if (inputLanguage === "yoruba") {
+  rec.lang = "en-US";
+} else if (inputLanguage === "igbo") {
+  rec.lang = "en-US";
+}
 
     rec.onstart = function () {
       setIsListening(true);
