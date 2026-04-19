@@ -612,7 +612,7 @@ if (inputLanguage === "auto") {
   });
 
   return (
-    <>
+    
 <div style={{
   display: "flex",
   alignItems: "center",
@@ -1024,4 +1024,4 @@ const whiteButton = {
 
 
 
-</>
+
