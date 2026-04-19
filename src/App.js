@@ -655,7 +655,7 @@ if (inputLanguage === "auto") {
                 fontSize: 22,
               }}
             >
-              🩺
+              NCP
             </div>
             <div>
               <h2 style={{ color: "#6b21a8", margin: 0 }}>
