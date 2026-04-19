@@ -153,17 +153,28 @@ export default function App() {
     }
   };
 
-  const handleGenerate = function () {
-    setOutput(
-      generateNoteFromText(
-        roughNotes,
-        noteType,
-        substanceMode,
-        sbarFields,
-        inputLanguage
-      )
-    );
-  };
+  const handleGenerate = async function () {
+  setStatus("Generating...");
+
+  try {
+    const response = await fetch("/api/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        text: roughNotes
+      })
+    });
+
+    const data = await response.json();
+
+    setOutput(data.result);
+    setStatus("Done.");
+  } catch (error) {
+    setStatus("Failed.");
+  }
+};
 
   function cleanText(text, language) {
     let t = String(text || "")
