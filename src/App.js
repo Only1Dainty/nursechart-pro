@@ -664,7 +664,7 @@ if (inputLanguage === "auto") {
               <p
                 style={{ margin: "6px 0 0 0", color: "#6b7280", fontSize: 14 }}
               >
-                Built by nurse. Designed for nurses.
+                Built by a nurse. Designed for nurses.
               </p>
             </div>
           </div>
