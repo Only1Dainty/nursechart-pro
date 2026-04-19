@@ -70,16 +70,16 @@ Now convert the nurse's rough note into a polished nursing note using those rule
           content: text
         }
       ],
-      temperature: 0.4
-    });
-
-    res.status(200).json({
-      result: completion.choices[0].message.content
-    });
-
+      temperature: 0.4,
+      max_tokens:500
+      });
+      res.status(200).json({
+  result: completion.choices[0].message.content
+  });
   } catch (error) {
-    res.status(500).json({
+     res.status(500).json({
       error: "AI generation failed"
     });
+    
   }
 }
