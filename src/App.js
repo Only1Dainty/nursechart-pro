@@ -208,12 +208,17 @@ if (inputLanguage === "auto") {
       })
     });
 
-    const data = await response.json();
+   if (!response.ok) {
+  const errText = await response.text();
+  throw new Error(errText);
+}
 
-    setOutput(data.result);
-    setStatus("Done.");
-  } catch (error) {
-    setStatus("Failed.");
+const data = await response.json();
+setOutput(data.result || "");
+setStatus("Done.");
+} catch (error) {
+setStatus("Failed: " + error.message);
+}
   }
 };
 
