@@ -219,7 +219,7 @@ setStatus("Done.");
 } catch (error) {
 setStatus("Failed: " + error.message);
 }
-  }
+  
 };
 
   function cleanText(text, language) {
