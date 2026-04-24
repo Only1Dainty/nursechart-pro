@@ -84,4 +84,4 @@ Now convert the nurse's rough note into a polished nursing note using those rule
     });
     
   }
-}
+};
