@@ -617,7 +617,24 @@ setStatus("Failed: " + error.message);
   });
 
   return (
-    
+    <>
+<div
+  style={{
+    position: "fixed",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "420px",
+    height: "420px",
+    backgroundImage: "url('/NCPwatermark.png')",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "center",
+    backgroundSize: "contain",
+    opacity: 0.06,
+    zIndex: 0,
+    pointerEvents: "none"
+  }}
+></div>
 <div
       style={{
         minHeight: "100vh",
