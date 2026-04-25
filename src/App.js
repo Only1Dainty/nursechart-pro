@@ -927,8 +927,8 @@ setStatus("Failed: " + error.message);
           />
         </div>
       </div>
-    </div>
-  );
+    );
+
 }
 
 const labelStyle = {
