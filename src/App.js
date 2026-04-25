@@ -924,11 +924,10 @@ setStatus("Failed: " + error.message);
               background: "#f8fafc",
               minHeight: 200,
             }}
-          />
-        </div>
+              />
       </div>
-    );
-}
+    </div>
+  );
 }
 
 const labelStyle = {
@@ -943,6 +942,15 @@ const selectStyle = {
   padding: 12,
   borderRadius: 14,
   border: "1px solid #d8b4fe",
+  fontSize: 14,
+};
+
+const textareaStyle = {
+  width: "100%",
+  minHeight: 180,
+  borderRadius: 14,
+  border: "1px solid #d8b4fe",
+  padding: 12,
   fontSize: 14,
 };
 
