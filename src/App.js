@@ -929,15 +929,16 @@ setStatus("Failed: " + error.message);
     </div>
   );
 }
-
 const labelStyle = {
-  display: "block",
-  marginBottom: 8,
+ display: "block",
+marginBottom: 8,
   fontWeight: 700,
-  color: "#581c87",
-};
-
+   color: "#581c87",
+  };
+  
 const selectStyle = {
+
+
   width: "100%",
   padding: 12,
   borderRadius: 14,
