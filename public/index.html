@@ -2,10 +2,26 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="google-site-verification" content="1Pjkc8DaZZpYfV2Ms0Ny_ZL9w58WpGSdizkKzL3f8CM" />
 <title>NurseChart Pro</title>
+
+<style>
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("/NCPwatermark.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 420px;
+  opacity: 0.045;
+  pointer-events: none;
+  z-index: 999999;
+}
+</style>
 </head>
+
 <body>
 <div id="root"></div>
 </body>
