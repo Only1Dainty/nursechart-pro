@@ -928,8 +928,8 @@ setStatus("Failed: " + error.message);
       </div>
     </div>
   );
-}
-const labelStyle = {
+
+}const labelStyle = {
  display: "block",
 marginBottom: 8,
   fontWeight: 700,
