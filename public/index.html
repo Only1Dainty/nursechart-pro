@@ -1,29 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="google-site-verification" content="1Pjkc8DaZZpYfV2Ms0Ny_ZL9w58WpGSdizkKzL3f8CM" />
-<title>NurseChart Pro</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="google-site-verification" content="1Pjkc8DaZZpYfV2Ms0Ny_ZL9w58WpGSdizkKzL3f8CM" />
+  <title>NurseChart Pro</title>
 
-<style>
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background-image: url("/NCPwatermark.png");
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: 420px;
-  opacity: 0.18;
-  pointer-events: none;
-  z-index: 1;
-  mix-blend-mode: multiply;
-}
-</style>
+  <style>
+    html, body, #root {
+      min-height: 100%;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 520px;
+      height: 520px;
+      transform: translate(-50%, -50%);
+      background-image: url("/NCPwatermark.png");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain;
+      opacity: 0.22;
+      pointer-events: none;
+      z-index: 2147483647;
+      mix-blend-mode: multiply;
+    }
+  </style>
 </head>
 
 <body>
-<div id="root"></div>
+  <div id="root"></div>
 </body>
 </html>
