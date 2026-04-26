@@ -1015,7 +1015,7 @@ const whiteButton = {
   fontWeight: 700,
   cursor: "pointer",
 };
-
+}
 
 
 
