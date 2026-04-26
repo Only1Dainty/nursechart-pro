@@ -22,21 +22,17 @@
       z-index: 1;
     }
 
-    body::after {
-      content: "";
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      width: 500px;
-      height: 500px;
-      transform: translate(-50%, -50%);
-      background-image: url("/NCPwatermark.png");
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: contain;
-      opacity: 0.10;
-      pointer-events: none;
-      z-index: 999999;
-    }
+   body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("/NCPwatermark.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 420px;
+  opacity: 0.06;
+  pointer-events: none;
+  z-index: 0;
+}
   </style>
 </head>
