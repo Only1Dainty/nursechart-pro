@@ -8,23 +8,32 @@
   <link rel="canonical" href="https://www.nursechartpro.com/" />
   <title>NurseChart Pro</title>
 
- <style>
-  html,
-  body,
-  #root {
-    min-height: 100%;
-  }
+<style>
+    html, body, #root {
+      min-height: 100%;
+    }
 
-  body {
-    margin: 0;
-    background: #ffffff;
-  }
+    body {
+      margin: 0;
+    }
 
-  
+    #root {
+      position: relative;
+      z-index: 1;
+    }
 
-  #root {
-    position: relative;
-    z-index: 1;
-  }
-</style>
+   body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("/NCPwatermark.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 420px;
+  opacity: 0.06;
+  pointer-events: none;
+  z-index: 0;
+}
+  </style>
+
 </head>
