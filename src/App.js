@@ -693,7 +693,7 @@ backgroundSize: "420px",
               fontWeight: 700,
             }}
           >
-            Master Version
+            NCP
           </div>
         </div>
 
