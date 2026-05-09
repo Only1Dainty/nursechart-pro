@@ -621,7 +621,11 @@ setStatus("Failed: " + error.message);
 <div
       style={{
         minHeight: "100vh",
-        background: "linear-gradient(to bottom, #f3e8ff, #ffffff)",
+        background:  "transparent",
+        backgroundImage: 'url("/NCPwatermark.png")',
+backgroundRepeat: "no-repeat",
+backgroundPosition: "center",
+backgroundSize: "420px",
         padding: 20,
         fontFamily: "Arial, sans-serif",
       }}
