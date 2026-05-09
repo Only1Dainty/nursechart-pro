@@ -890,6 +890,14 @@ backgroundSize: "420px",
           <button onClick={clearAll} style={whiteButton}>
             Clear
           </button>
+            <button
+  onClick={() =>
+    window.open("https://buy.stripe.com/test_7sYeVc56efeN5LFaid3cc00", "_blank")
+  }
+  style={greenButton}
+>
+  Subscribe Premium
+</button>
         </div>
 
         <div
