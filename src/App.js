@@ -617,7 +617,7 @@ setStatus("Failed: " + error.message);
     outline: "none",
     background: activeSbarField === field ? "#faf5ff" : "#fff",
   });
-
+const stripePromise = loadStripe("pk_test_51TVH0VC04moZOo0gzpxbfV9t3KN28qjK5Vxrcwt2X1Eh0Cvgi5FyOaWasr097tuYTDE1iH9biwxt9xvuelsU2HfF00uIUFIpn1");
   return (
     
 <div
