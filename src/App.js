@@ -198,6 +198,9 @@ if (inputLanguage === "auto") {
 
   const handleGenerate = async function () {
   setStatus("Generating...");
+alert("Subscribe to NurseChart Pro Premium to unlock note generation.");
+  window.open("https://buy.stripe.com/dRm5kCeIF0Uy1Ky2Wb28800", "_blank");
+  return;
 
   try {
     const response = await fetch("/api/generate", {
