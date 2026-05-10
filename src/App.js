@@ -901,20 +901,19 @@ backgroundSize: "420px",
             Clear
           </button>
             <button
-  onClick={() =>
-    onClick={() => {
-  localStorage.setItem("ncpPremium", "true");
+  onClick={() => {
+    localStorage.setItem("ncpPremium", "true");
 
-  window.open(
-    "https://buy.stripe.com/dRm5kCeIF0Uy1Ky2Wb28800",
-    "_blank"
-  );
-}}
-  }
+    window.open(
+      "https://buy.stripe.com/dRm5kCeIF0Uy1Ky2Wb28800",
+      "_blank"
+    );
+  }}
   style={greenButton}
 >
   Subscribe Premium
 </button>
+ 
         </div>
 
         <div
