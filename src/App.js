@@ -9,7 +9,14 @@ export default function App() {
   const [output, setOutput] = useState("");
   const [copied, setCopied] = useState(false);
   const [substanceMode, setSubstanceMode] = useState(false);
+const [isPremium, setIsPremium] = useState(false);
+  useEffect(() => {
+  const premiumStatus = localStorage.getItem("ncpPremium");
 
+  if (premiumStatus === "true") {
+    setIsPremium(true);
+  }
+}, []);
   const [sbarFields, setSbarFields] = useState({
     situation: "",
     background: "",
@@ -895,7 +902,14 @@ backgroundSize: "420px",
           </button>
             <button
   onClick={() =>
-    window.open("https://buy.stripe.com/dRm5kCeIF0Uy1Ky2Wb28800", "_blank")
+    onClick={() => {
+  localStorage.setItem("ncpPremium", "true");
+
+  window.open(
+    "https://buy.stripe.com/dRm5kCeIF0Uy1Ky2Wb28800",
+    "_blank"
+  );
+}}
   }
   style={greenButton}
 >
