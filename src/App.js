@@ -892,7 +892,7 @@ backgroundSize: "420px",
           </button>
             <button
   onClick={() =>
-    window.open("https://buy.stripe.com/test_7sYeVc56efeN5LFaid3cc00", "_blank")
+    window.open("https://buy.stripe.com/dRm5kCeIF0Uy1Ky2Wb28800", "_blank")
   }
   style={greenButton}
 >
