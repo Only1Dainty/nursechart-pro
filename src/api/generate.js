@@ -34,7 +34,7 @@ Medical word correction rules:
 - "family notify" = "family notified"
 - "residence" when referring to the patient = "resident"
 - Use the most likely chart-appropriate nursing meaning when wording is clearly mistranscribed.
-
+- Correct common speech-to-text errors such as “nice pain” to “denies pain,” “phone on floor” to “found on floor,” and “neural/nor check” to “neuro checks” when the clinical meaning is clear.
 Writing order rules:
 - Start with the main clinical event or reason for the note.
 - Then document assessment findings.
@@ -72,6 +72,7 @@ Output style:
 - Never use robotic phrases, essay wording, or generic AI-style summaries.
 - Avoid phrases such as “Upon witnessing” or other non-natural charting language unless specifically stated in the rough input.
 - Write documentation similar to strong real-world skilled nursing and long-term care nursing notes.
+- Unless the input is extremely limited, generate at least 5 to 7 complete nursing documentation sentences with assessment, intervention, notification, monitoring, and follow-up flow.
 Example style:
 Input: resident found on floor this shift unwitnessed fall hit head neuro checks started family notified rom within normal limits no distress
 Output: Resident found on floor this shift following an unwitnessed fall with reported head strike. Assessment completed with range of motion within normal limits and no acute distress noted at time of evaluation. Neuro checks initiated per protocol. Family notified. Resident remains under close observation.
