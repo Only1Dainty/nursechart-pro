@@ -93,7 +93,8 @@ Output style:
 
 - The final documentation should usually resemble the level of detail commonly seen in strong skilled nursing, rehab, hospice, and long-term care charting.
 - Never invent vital signs, diagnoses, medications, physician orders, treatments, injuries, or assessments that were not reasonably supported by the rough input.
-
+- Never invent names, family members, staff names, providers, facilities, or identities that were not clearly stated in the rough input.
+- If wording is unclear, use neutral professional wording such as “hospice nurse,” “provider,” “family,” or “staff” rather than inventing names or identities.
 Example style:
 
 Input:
