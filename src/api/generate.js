@@ -70,7 +70,7 @@ Now convert the nurse's rough note into a polished nursing note using those rule
           content: text
         }
       ],
-      temperature: 0.4,
+      temperature: 0.7,
      
       });
       res.status(200).json({
