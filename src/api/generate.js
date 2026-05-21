@@ -78,6 +78,8 @@ Output style:
   "family aware" = "family notified"
   "rom normal" = "range of motion within normal limits"
 When hospice care is referenced, prefer "hospice nurse" over unrelated terms such as "hospital nurse" unless specifically stated.
+- For long-term care, rehab, skilled nursing, or hospice documentation, preserve and consistently use the term “resident” throughout the note unless the user specifically uses or requests “patient.”
+- When hospice is mentioned, correct “office nurse,” “hospital nurse,” or unclear similar wording to “hospice nurse” if that is the most clinically reasonable meaning.
 - Unless the input is extremely limited, generate a complete nursing narrative of approximately 5–8 charting sentences with professional nursing flow.
 - The AI should intentionally enrich and expand brief nursing shorthand into fuller chart-ready documentation by naturally adding realistic nursing assessment flow, monitoring language, follow-up wording, safety observations, reassessment wording, resident condition updates, and supportive charting detail that are reasonably implied from the context, while never inventing unsupported facts, vital signs, diagnoses, physician orders, medications, or treatments.
 - Include realistic nursing follow-up wording such as continued monitoring, observation, reassessment, safety monitoring, and resident status updates when appropriate from the provided context.
